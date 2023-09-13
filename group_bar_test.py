@@ -17,13 +17,28 @@ df = pd.DataFrame(data)
 start_date = '2023-01-15'
 end_date = '2023-02-15'
 filtered_df = df[(df['time_column'] >= start_date) & (df['time_column'] <= end_date)]
+filtered_df[['value1', 'value2', 'value3', 'value4']] = filtered_df[['value1', 'value2', 'value3', 'value4']].fillna(0)
+filtered_df[['value1', 'value2', 'value3', 'value4']] = filtered_df[['value1', 'value2', 'value3', 'value4']].astype(float)
+filtered_df[['group_column']] = filtered_df[['group_column']].astype(pd.StringDtype())
 
-grouped_value4 = filtered_df.groupby(['group_column']).agg({'value1':'sum', 'value2':'sum', 'value3':'sum', 'value4':'sum'})
-grouped_value4.plot(kind='bar', figsize=(12, 7))
+grouped_value = filtered_df.groupby(['group_column']).agg({'value1':'sum', 'value2':'sum', 'value3':'sum', 'value4':'sum'})
+grouped_value.plot(kind='bar', figsize=(12, 7))
 
 plt.xlabel('Group')
 plt.ylabel('Values')
 plt.title(f'Between {start_date} and {end_date} groups values')
 plt.tight_layout()
 plt.show()
+
+grouped_value.to_json('bar.json', orient = 'records', lines=True)
+filtered_df.to_json('filtered.json', orient = 'records', lines=True)
+print(f"Group types: {grouped_value.dtypes}")
+print(f"Filtered types: {filtered_df.dtypes}")
+print(f"Original df types: {df.dtypes}")
+print(f"Group size: {grouped_value.memory_usage().sum() / (1024**2)} mb")
+print(f"Filtered size: {filtered_df.memory_usage().sum() / (1024**2)} mb")
+print(f"Original df size: {df.memory_usage().sum() / (1024**2)} mb")
+
+
+
 
